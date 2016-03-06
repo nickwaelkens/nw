@@ -10,8 +10,10 @@ const VERBOSE = process.argv.indexOf('--verbose') !== -1;
 console.log('[' + time.format(new Date()) + '] Starting a', DEBUG ? 'debug' : 'release', 'run');
 
 var config = {
-  entry: './src/js/index.js',
-
+  entry : './src/js/index.js',
+  node  : {
+    fs: 'empty'
+  },
   output: {
     path    : path.join(__dirname, '../build'),
     filename: 'bundle.js',
@@ -50,17 +52,23 @@ var config = {
       include: [
         path.resolve(__dirname, '../src/js'),
       ],
+      exclude: /node_modules/,
     }],
-    loaders   : [{
-      test   : /\.js$/,
-      loader : 'babel-loader',
-      include: [
-        path.resolve(__dirname, '../src/js'),
-      ],
-      query  : {
-        presets: ['es2015', 'stage-0'],
+    loaders   : [
+      {
+        test  : /\.json$/,
+        loader: 'json'
       },
-    }],
+      {
+        test   : /\.js$/,
+        loader : 'babel-loader',
+        include: [
+          path.resolve(__dirname, '../src/js'),
+        ],
+        query  : {
+          presets: ['es2015', 'stage-0'],
+        },
+      }],
   },
 };
 
