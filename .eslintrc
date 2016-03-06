@@ -1,0 +1,10 @@
+{
+  "parser": "babel-eslint",
+  "extends": "airbnb/base",
+  "rules": {
+    "key-spacing": 0
+  },
+  "globals": {
+    "Promise": true
+  }
+}
