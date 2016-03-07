@@ -1,8 +1,14 @@
 import PIXI from 'pixi.js';
-import FPSMeter from './utils/fpsmeter';
+import { sample } from 'lodash';
 
-const PARTICLE_COUNT = 10;
-const particleColors = [0xFFFFFF, 0xFFFFFF, 0xFFFFFF];
+import FPSMeter from './utils/fpsmeter';
+import Particle from './components/particle';
+
+const palette = [0xffffff, 0x000000];
+
+let counter = 0;
+
+const PARTICLE_COUNT = 2000;
 let values = [];
 const particles = [];
 
@@ -11,36 +17,32 @@ const calculatePositions = (screenWidth, screenHeight) => {
 
   for (let i = 0; i < PARTICLE_COUNT; i++) {
     positions[i] = {
-      x: (screenWidth / 2) + i,
-      y: (screenHeight / 2) + i,
+      x: screenWidth * Math.random(),
+      y: screenHeight * Math.random(),
     };
   }
 
   return positions;
 };
 
-class Particle extends PIXI.Sprite {
-  constructor(...args) {
-    super(...args);
-
-    // Get number between 5 and 10.
-    this.radius = Math.floor(Math.random() * 10) + 5;
-
-    this.alpha = Math.random();
-
-    this.graphics = new PIXI.Graphics();
-    this.graphics.beginFill(particleColors[Math.floor(Math.random() * particleColors.length)], 1);
-    this.graphics.drawCircle(0, 0, this.radius);
-    this.addChild(this.graphics);
-  }
-}
-
 class Emitter extends PIXI.Sprite {
   render() {
     for (let i = 0; i < PARTICLE_COUNT; i++) {
-      const particle = new Particle();
+      const particle = new Particle({ color: sample(palette) });
       particle.anchor.x = particle.anchor.y = 0.5;
-      particle.count = 0;
+
+      // Set each particle's initial position
+      particle.x = values[i].x;
+      particle.y = values[i].y;
+
+      particle.period = Math.min(Math.random(), 0.5);
+      particle.offset = Math.random() * 5;
+
+      // Let particles rotate (counter-) clockwise
+      particle.angle = sample([-1, 1]);
+
+      // How far can every particle move around?
+      particle.tolerance = 0.08 * Math.random();
 
       particles[i] = particle;
       this.addChild(particles[i]);
@@ -50,12 +52,10 @@ class Emitter extends PIXI.Sprite {
   update() {
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       const particle = particles[i];
-      const value = values[i];
 
-      particle.x = value.x + Math.sin(50 * particle.count);
-      particle.y = value.y + Math.cos(50 * particle.count);
-
-      particle.count += 1;
+      particle.x += particle.tolerance * Math.sin(counter * particle.angle + particle.offset);
+      particle.y += particle.tolerance * Math.cos(counter * particle.angle + particle.offset);
+      particle.alpha = Math.max(Math.sin(particle.period * counter + particle.offset), 0);
     }
   }
 }
@@ -65,13 +65,11 @@ class Main {
     // Initialize renderer
     this.renderer = PIXI.autoDetectRenderer(this.w, this.h, {
       backgroundColor: 0x1d99a3,
+      antialias      : true,
     });
     document.body.appendChild(this.renderer.view);
 
     values = calculatePositions(this.w, this.h);
-    setInterval(() => {
-      values = calculatePositions(this.w * Math.random() * 1.5, this.h * Math.random() * 1.5);
-    }, 5000);
 
     // Initialize Emitter
     this.emitter = new Emitter();
@@ -96,6 +94,9 @@ class Main {
     if (this.fpsMeter) this.fpsMeter.update();
     this.emitter.update();
     this.renderer.render(this.stage);
+
+    counter += 0.05;
+
     window.requestAnimationFrame(() => this.animate());
   }
 }
