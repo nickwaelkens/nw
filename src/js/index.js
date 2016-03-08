@@ -3,7 +3,6 @@ import { sample } from 'lodash';
 
 import Particle from './components/particle';
 
-const palette = [0xffffff, 0x000000];
 const palette = [0xffffff, 0xe62e54, 0x55ccfe];
 
 let counter = 0;
@@ -72,7 +71,6 @@ class Main {
   constructor() {
     // Initialize renderer
     this.renderer = PIXI.autoDetectRenderer(this.w, this.h, {
-      backgroundColor: 0x1d99a3,
       backgroundColor: 0x190500,
       antialias      : true,
     });
@@ -82,9 +80,6 @@ class Main {
 
     // Initialize Emitter
     this.emitter = new Emitter();
-
-    // Initialize FPSMeter
-    this.fpsMeter = new FPSMeter();
 
     // Initialize the stage
     this.stage = new PIXI.Container();
