@@ -1,10 +1,10 @@
 import PIXI from 'pixi.js';
 import { sample } from 'lodash';
 
-import FPSMeter from './utils/fpsmeter';
 import Particle from './components/particle';
 
 const palette = [0xffffff, 0x000000];
+const palette = [0xffffff, 0xe62e54, 0x55ccfe];
 
 let counter = 0;
 
@@ -35,6 +35,7 @@ class Emitter extends PIXI.Sprite {
       particle.x = values[i].x;
       particle.y = values[i].y;
 
+      // Some random values to play around with
       particle.period = Math.min(Math.random(), 0.5);
       particle.offset = Math.random() * 5;
 
@@ -43,6 +44,10 @@ class Emitter extends PIXI.Sprite {
 
       // How far can every particle move around?
       particle.tolerance = 0.08 * Math.random();
+
+      // Radius
+      particle.oldRadius = particle.radius;
+      particle.radius = 50;
 
       particles[i] = particle;
       this.addChild(particles[i]);
@@ -56,6 +61,9 @@ class Emitter extends PIXI.Sprite {
       particle.x += particle.tolerance * Math.sin(counter * particle.angle + particle.offset);
       particle.y += particle.tolerance * Math.cos(counter * particle.angle + particle.offset);
       particle.alpha = Math.max(Math.sin(particle.period * counter + particle.offset), 0);
+
+      particle.radius += (particle.oldRadius - particle.radius) * 0.05;
+      particle.scale = new PIXI.Point(particle.radius / 10, particle.radius / 10);
     }
   }
 }
@@ -65,6 +73,7 @@ class Main {
     // Initialize renderer
     this.renderer = PIXI.autoDetectRenderer(this.w, this.h, {
       backgroundColor: 0x1d99a3,
+      backgroundColor: 0x190500,
       antialias      : true,
     });
     document.body.appendChild(this.renderer.view);
@@ -91,7 +100,6 @@ class Main {
   }
 
   animate() {
-    if (this.fpsMeter) this.fpsMeter.update();
     this.emitter.update();
     this.renderer.render(this.stage);
 
