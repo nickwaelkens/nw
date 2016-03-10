@@ -9,14 +9,20 @@ const VERBOSE = process.argv.indexOf('--verbose') !== -1;
 
 console.log('[' + time.format(new Date()) + '] Starting a', DEBUG ? 'debug' : 'release', 'run');
 
+var defaultPlugins = [new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js')];
+var releasePlugins = [new webpack.optimize.UglifyJsPlugin({ compress: { screw_ie8: true } })];
+
 var config = {
-  entry : './src/js/index.js',
+  entry : {
+    app   : './src/js/index.js',
+    vendor: ['lodash', 'pixi.js']
+  },
   node  : {
     fs: 'empty'
   },
   output: {
     path    : path.join(__dirname, '../build'),
-    filename: 'bundle.js',
+    filename: '[name].bundle.js',
   },
 
   stats: {
@@ -31,19 +37,15 @@ var config = {
     cachedAssets: VERBOSE,
   },
 
-  devtool: DEBUG ? 'cheap-module-eval-source-map' : false,
+  debug: DEBUG,
+
+  devtool: DEBUG ? 'source-map' : false,
 
   resolve: {
     extensions: ['', '.js', '.json'],
   },
 
-  plugins: DEBUG ? [] : [
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        screw_ie8: true,
-      },
-    }),
-  ],
+  plugins: DEBUG ? defaultPlugins : defaultPlugins.concat(releasePlugins),
 
   module: {
     preLoaders: [{
