@@ -11,7 +11,11 @@
 
   var imagesFolder = process.argv[2] || path.join(__dirname, '..', 'src', 'images');
   var outputFolder = process.argv[3] || path.join(__dirname, '..', 'build');
-  var imagePaths = fs.readdirSync(imagesFolder);
+  var imagePaths = fs.readdirSync(imagesFolder).filter(function (potentialImagePath) {
+    // Only allow .png's (for now?)
+    return path.extname(potentialImagePath) === '.png';
+  });
+
   var skippablePixelsAmount = 2; // Only loop every X pixels to reduce file size
 
   // Map images meta data for easier usage later on

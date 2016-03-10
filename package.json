@@ -14,6 +14,7 @@
     "start": "npm run build && npm-run-all --parallel server watch:*",
     "build": "npm-run-all build:*",
     "prebuild": "rimraf $npm_package_config_build && mkdirp $npm_package_config_build",
+    "build:coords": "node tools/img2coords.js",
     "build:static": "cpx \"$npm_package_config_src/static/**/*\" $npm_package_config_build",
     "build:js": "webpack --config tools/webpack.config.js",
     "lint:js": "eslint $npm_package_config_src/js",
