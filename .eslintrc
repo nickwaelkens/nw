@@ -2,9 +2,13 @@
   "parser": "babel-eslint",
   "extends": "airbnb/base",
   "rules": {
-    "key-spacing": 0
+    "key-spacing": 0,
+    "no-param-reassign": [2, {"props": false}]
   },
   "globals": {
-    "Promise": true
+    "Promise": true,
+    "TweenMax": true,
+    "Back": true,
+    "fetch": true
   }
 }
