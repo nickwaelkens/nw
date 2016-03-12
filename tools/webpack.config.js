@@ -71,6 +71,12 @@ var config = {
           presets: ['es2015', 'stage-0'],
         },
       }],
+    postLoaders: [
+      {
+        include: path.resolve(__dirname, '..', 'node_modules/pixi.js'),
+        loader : 'transform?brfs'
+      }
+    ],
   },
 };
 
