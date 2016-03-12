@@ -15,7 +15,7 @@ var releasePlugins = [new webpack.optimize.UglifyJsPlugin({ compress: { screw_ie
 var config = {
   entry : {
     app   : './src/js/index.js',
-    vendor: ['lodash', 'pixi.js']
+    vendor: ['lodash', 'pixi.js', 'chroma-js']
   },
   node  : {
     fs: 'empty'
@@ -48,7 +48,7 @@ var config = {
   plugins: DEBUG ? defaultPlugins : defaultPlugins.concat(releasePlugins),
 
   module: {
-    preLoaders: [{
+    preLoaders : [{
       test   : /\.js$/,
       loader : 'eslint-loader',
       include: [
@@ -56,7 +56,7 @@ var config = {
       ],
       exclude: /node_modules/,
     }],
-    loaders   : [
+    loaders    : [
       {
         test  : /\.json$/,
         loader: 'json'

@@ -55,6 +55,7 @@
     "webpack": "^1.12.14"
   },
   "dependencies": {
+    "chroma-js": "^1.1.1",
     "lodash": "^4.6.1",
     "pixi.js": "^3.0.9"
   }
