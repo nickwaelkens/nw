@@ -8,7 +8,7 @@
   "globals": {
     "Promise": true,
     "TweenMax": true,
-    "Back": true,
+    "Power4": true,
     "fetch": true
   }
 }

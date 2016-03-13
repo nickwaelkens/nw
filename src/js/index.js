@@ -2,19 +2,21 @@ import PIXI from 'pixi.js';
 import { sample, sampleSize, fill } from 'lodash';
 
 import Particle from './components/particle';
+import palette from './utils/palette';
 
-const palette = [0x00aeff, 0x0fa954, 0x54396e, 0xe61d5f];
+const _palette = palette(['#d06e76', '#fdddd7', '#20bfd2']);
 
 let counter = 0;
 
 const PARTICLE_COUNT = 1000;
 let coordinates = [];
 const particles = [];
+const mousePosition = { x: 0, y: 0 };
 
 class Emitter extends PIXI.Sprite {
   render() {
     for (let i = 0; i < PARTICLE_COUNT; i++) {
-      const particle = new Particle({ color: sample(palette) });
+      const particle = new Particle({ color: sample(_palette) });
       particle.anchor.x = particle.anchor.y = 0.5;
 
       // Some random values to play around with
@@ -40,9 +42,9 @@ class Emitter extends PIXI.Sprite {
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       const particle = particles[i];
 
-      particle.x = coordinates[i][0] +
+      particle.x = coordinates[i][0] + mousePosition.x +
         particle.tolerance * Math.sin(counter * particle.angle + particle.offset);
-      particle.y = coordinates[i][1] +
+      particle.y = coordinates[i][1] + mousePosition.y +
         particle.tolerance * Math.cos(counter * particle.angle + particle.offset);
 
       particle.alpha = Math.max(Math.sin(particle.period * counter + particle.offset), 0);
@@ -65,7 +67,7 @@ const animateValues = (from, to) => {
   TweenMax.to(animatingValue, duration, {
     val       : '+=100',
     roundProps: 'val',
-    ease      : Elastic.easeOut,
+    ease      : Power4.easeOut,
     onUpdate  : () => {
       newCoordinates = [];
       const step = (animatingValue.val / 100).toFixed(2);
@@ -84,6 +86,26 @@ const animateValues = (from, to) => {
   });
 };
 
+const onMouseMove = (event) => {
+  const isTouch = event.type.indexOf('touch') !== -1;
+  const isPointer = event.type.indexOf('pointer') !== -1;
+
+  if (isPointer) {
+    event = event.originalEvent; // eslint-disable-line no-param-reassign
+  } else {
+    if (isTouch) {
+      event = event.originalEvent.touches[0] // eslint-disable-line no-param-reassign
+        || event.originalEvent.changedTouches[0];
+    }
+  }
+
+  const relativeX = event.pageX / (window.innerWidth / 2);
+  const relativeY = event.pageY / (window.innerHeight / 2);
+
+  mousePosition.x = (relativeX - 1) * 20;
+  mousePosition.y = (relativeY - 1) * 20;
+};
+
 class Main {
   constructor({ images }) {
     // Initialize renderer
@@ -91,10 +113,10 @@ class Main {
       transparent: true,
       antialias  : true,
     });
-    document.body.appendChild(this.renderer.view);
 
     this.images = images;
-    coordinates = images[0].coordinates;
+
+    coordinates = this.images[0].coordinates;
 
     setTimeout(() => {
       animateValues(images[0].coordinates, images[1].coordinates);
@@ -102,12 +124,17 @@ class Main {
 
     // Initialize Emitter
     this.emitter = new Emitter();
+    this.emitter.x = this.w / 2 - 200; // helft image w/h
+    this.emitter.y = this.h / 2 - 118;
 
     // Initialize the stage
     this.stage = new PIXI.Container();
 
     // And finally add emitter to the stage
     this.stage.addChild(this.emitter);
+
+    document.body.appendChild(this.renderer.view);
+    document.addEventListener('mousemove', onMouseMove);
   }
 
   render() {
@@ -153,6 +180,4 @@ fetch('images.json').then((response) => {
 
   const main = new Main({ images });
   main.render();
-}).catch((err) => {
-  console.error(err);
 });

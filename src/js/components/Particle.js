@@ -4,8 +4,8 @@ class Particle extends PIXI.Sprite {
   constructor({ color }) {
     super();
 
-    // Get number between 2 and 6.
-    this.radius = Math.floor(Math.random() * 4) + 3;
+    // Get number between 3 and 5.
+    this.radius = Math.floor(Math.random() * 5) + 3;
 
     // Set scale to 0 so it feels like particles animate from nothingness
     this.scale = 0;
