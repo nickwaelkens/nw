@@ -1,7 +1,7 @@
 {
-  "name": "nw-2016",
+  "name": "png2particles",
   "version": "0.0.1",
-  "description": "My personal homepage slash playground. Is it 2016 already?!",
+  "description": "Transforms PNGs to animated particles. Merely a proof of concept.",
   "main": "src/js/index.js",
   "config": {
     "src": "src",
@@ -25,11 +25,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:nickwaelkens/nw.git"
+    "url": "git@github.com:nickwaelkens/png2particles.git"
   },
   "author": "Nick Waelkens <hello@nickwaelkens.be>",
   "license": "ISC",
-  "homepage": "https://github.com/nickwaelkens/nw",
+  "homepage": "https://github.com/nickwaelkens/png2particles",
   "devDependencies": {
     "babel-core": "^6.6.5",
     "babel-eslint": "^5.0.0",
